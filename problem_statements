@@ -1,4 +1,3 @@
-
 1. What is the total number of COVID-19 cases recorded globally?
 
 SELECT
@@ -618,8 +617,8 @@ SELECT
 FROM	
 	(SELECT	
 		location,
-		AVG(CASE WHEN (people_vaccinated / population) * 100 >= 60 THEN new_cases END) as 'after_60',
-		AVG(CASE WHEN (people_vaccinated / population) * 100 < 60 THEN new_cases END) as 'before_60'
+		AVG(CASE WHEN (people_vaccinated / population) * 100 >= 60 THEN new_cases END) AS 'after_60',
+		AVG(CASE WHEN (people_vaccinated / population) * 100 < 60 THEN new_cases END) AS 'before_60'
 	FROM
 		covid_data
 	GROUP BY
