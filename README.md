@@ -19,6 +19,8 @@ List of Some Problem Statements that are included in this project:
 2. Find the countries where the GDP per capita is above $50,000 and the vaccination rate is over 70%
 3. Find the total number of new cases reported worldwide during the first 6 months of the pandemic.
 
+Note: These problem statements were generated using AI, and I have provided solutions for them.
+
 ## Feedback
 
 I welcome your contributions, suggestions, and insights with open heart! All feedback is appreciated.
