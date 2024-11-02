@@ -1,4 +1,3 @@
-## Problem_statements
 
 1. What is the total number of COVID-19 cases recorded globally?
 
@@ -38,7 +37,7 @@ WHERE
 
 SELECT
 	location, 
-  max(new_cases) AS Max_cases
+	max(new_cases) AS Max_cases
 FROM 
 	covid_data
 GROUP BY
@@ -75,7 +74,7 @@ Where
 
 SELECT
 	location,
-  round(avg(life_expectancy),1) AS life_expectancy
+	round(avg(life_expectancy),1) AS life_expectancy
 FROM
 	covid_data
 WHERE 
@@ -102,13 +101,13 @@ WHERE
 
 SELECT
 	location,
-  population,
-  sum(new_cases)
+	population,
+	sum(new_cases)
 FROM 
 	covid_data
 GROUP BY 
 	location, 
-  population
+  	population
 HAVING
 	sum(new_cases) < 1000;
 
@@ -118,9 +117,9 @@ HAVING
 
 SELECT 
 	continent,
-  max(total_deaths) AS Maximum_deaths,
-  min(total_deaths) AS Minimum_deaths,
-  round(avg(total_deaths),2) AS Average_deaths
+	max(total_deaths) AS Maximum_deaths,
+	min(total_deaths) AS Minimum_deaths,
+	round(avg(total_deaths),2) AS Average_deaths
 FROM
 	covid_data
 GROUP BY
@@ -132,7 +131,7 @@ GROUP BY
 
 SELECT
 	continent,
-  sum(new_vaccinations) AS Total_vaccinations
+	sum(new_vaccinations) AS Total_vaccinations
 FROM
 	covid_data
 GROUP BY
@@ -144,7 +143,7 @@ GROUP BY
 
 SELECT
 	location,
-  round(avg(new_cases),2) AS Average_cases
+  	round(avg(new_cases),2) AS Average_cases
 FROM
 	covid_data
 WHERE
@@ -158,11 +157,11 @@ GROUP BY
 
 SELECT
 	location,
-  sum(new_deaths)
+	sum(new_deaths)
 FROM
 	covid_data
 WHERE
-  (people_vaccinated/population)*100 BETWEEN 20 AND 40
+	(people_vaccinated/population)*100 BETWEEN 20 AND 40
 GROUP BY
 	location;
 
@@ -191,17 +190,17 @@ SELECT
 	CASE 
 		WHEN life_expectancy < 40 THEN 'Less than 40'
 		WHEN life_expectancy <= 50 THEN '40-50'
-    WHEN life_expectancy <= 60 THEN '50-60'
-    WHEN life_expectancy <= 70 THEN '60-70'
-    WHEN life_expectancy <= 80 THEN '70-80'
-    WHEN life_expectancy > 80 THEN 'More than 80'
-    ELSE 'others'
-    END AS life_expectancy_rate,
-  sum(new_vaccinations) AS total_vaccinations
+    		WHEN life_expectancy <= 60 THEN '50-60'
+    		WHEN life_expectancy <= 70 THEN '60-70'
+    		WHEN life_expectancy <= 80 THEN '70-80'
+    		WHEN life_expectancy > 80 THEN 'More than 80'
+    		ELSE 'others'
+    		END AS life_expectancy_rate,
+	sum(new_vaccinations) AS total_vaccinations
 FROM 
 	covid_data
 GROUP BY
-  life_expectancy_rate;
+	life_expectancy_rate;
 
 
 -------------------------------------------------------------------------------------------------------------------------------
@@ -223,8 +222,8 @@ SELECT
 	CASE
 		WHEN population <= 1000000 THEN 'small'
 		WHEN population <= 10000000 THEN 'medium'
-    WHEN population > 10000000 THEN 'large'
-    END AS population_group,
+    		WHEN population > 10000000 THEN 'large'
+    		END AS population_group,
 	round(avg(people_vaccinated / population) * 100, 2) AS vaccination_rate
 FROM
 	covid_data
@@ -238,16 +237,16 @@ GROUP BY
 SELECT
 	location,
 	avg(CASE 
-			  WHEN (people_vaccinated / population) * 100 <= 0.40 THEN new_cases
-		  	END) AS avg_cases_before,
+		WHEN (people_vaccinated / population) * 100 <= 0.40 THEN new_cases
+		END) AS avg_cases_before,
 	avg(CASE 
-		  	WHEN (people_vaccinated / population) * 100 > 0.40 THEN new_cases
-		  	END) AS avg_cases_after,
+		WHEN (people_vaccinated / population) * 100 > 0.40 THEN new_cases
+	  	END) AS avg_cases_after,
 	avg(CASE 
-	  		WHEN (people_vaccinated / population) * 100 <= 0.40 THEN new_cases
-	  		END) - avg(CASE 
-	  		WHEN (people_vaccinated / population) * 100 > 0.40 THEN new_cases
-	  		END) AS reduction_in_cases
+  		WHEN (people_vaccinated / population) * 100 <= 0.40 THEN new_cases
+  		END) - avg(CASE 
+  		WHEN (people_vaccinated / population) * 100 > 0.40 THEN new_cases
+  		END) AS reduction_in_cases
 FROM 
 	covid_data
 GROUP BY
@@ -273,7 +272,7 @@ GROUP BY
 20. Find the total number of new cases reported in the last 30 days.
 
 SELECT
-	sum(new_cases) AS total_new_cases_last_30_day	s
+	sum(new_cases) AS total_new_cases_last_30_day
 FROM
 	covid_data
 WHERE date >= (SELECT 
@@ -292,9 +291,9 @@ FROM
 WHERE 
 	date >= CURDATE() - INTERVAL 7 DAY
 GROUP BY 
-  location
+	location
 HAVING
-  sum(new_deaths) = 0; 
+	sum(new_deaths) = 0; 
 
 -------------------------------------------------------------------------------------------------------------------------------
 
@@ -316,11 +315,11 @@ LIMIT 1;
 23. What is the average daily new cases across all countries for the past month?
 
 SELECT 
-  AVG(new_cases) AS average_daily_new_cases_past_month
+	AVG(new_cases) AS average_daily_new_cases_past_month
 FROM
-  covid_data
+	covid_data
 WHERE
-  date >= CURDATE() - INTERVAL 30 DAY;
+	date >= CURDATE() - INTERVAL 30 DAY;
 
 -------------------------------------------------------------------------------------------------------------------------------
 
@@ -349,9 +348,9 @@ SELECT
 FROM
 	covid_data
 WHERE date <= ((SELECT 
-				          min(date)
+			min(date)
                 FROM
-		          		covid_data) + INTERVAL 180 DAY);
+			covid_data) + INTERVAL 180 DAY);
 
 -------------------------------------------------------------------------------------------------------------------------------
 
@@ -391,9 +390,9 @@ HAVING
 SELECT 
 	avg(daily_new_deaths) AS avg_daily_new_deaths
 FROM 
-  (SELECT
-    location,
-    avg(new_deaths) AS daily_new_deaths
+	(SELECT
+		location,
+		avg(new_deaths) AS daily_new_deaths
 	FROM
 		covid_data
 	WHERE
@@ -408,7 +407,7 @@ FROM
 SELECT 
 	location
 FROM 
-  (SELECT
+	(SELECT
 		location,
 		(people_vaccinated / population) * 100 AS vaccination_rate
 	FROM
@@ -432,7 +431,7 @@ FROM
 		sum(new_vaccinations) as total_vaccinations_1
 	FROM
 		covid_data
-  GROUP BY
+	GROUP BY
 		location
 	HAVING
 		total_cases_1 < total_vaccinations_1) AS subquery;
@@ -480,17 +479,17 @@ FROM
 SELECT 
 	location
 FROM 
-  (SELECT
+	(SELECT
 		location,
-    sum(people_vaccinated) AS people_vaccinated_1,
-    population
+    		sum(people_vaccinated) AS people_vaccinated_1,
+		population
 	FROM
 		covid_data
 	WHERE 
 		population < 1000000
 	GROUP BY
 		location,
-    population) AS subquery
+    		population) AS subquery
 WHERE 
 	((people_vaccinated_1 / population) * 100) > 0.80;
 
@@ -500,12 +499,12 @@ WHERE
 
 SELECT 
 	location,
-  (total_deaths_1 / total_cases_1) AS death_to_case_ratio
+	(total_deaths_1 / total_cases_1) AS death_to_case_ratio
 FROM
 	(SELECT
-    location,
-    sum(new_deaths) AS total_deaths_1,
-    sum(new_cases) AS total_cases_1
+    		location,
+    		sum(new_deaths) AS total_deaths_1,
+    		sum(new_cases) AS total_cases_1
 	FROM 
 		covid_data
 	WHERE 
@@ -537,7 +536,7 @@ FROM
 		location,
 		population
 	HAVING 
-	  total_cases_1 > avg_cases_1) AS subquery
+		total_cases_1 > avg_cases_1) AS subquery
 WHERE
 	((people_vaccinated_1 / population) * 100) > 50;
 
@@ -563,14 +562,14 @@ SELECT
 FROM
 	(SELECT
 		location,
-    (max(people_vaccinated) / population) * 100 AS total_people_vaccinated
+		(max(people_vaccinated) / population) * 100 AS total_people_vaccinated
 	FROM
 		covid_data
 	WHERE
 		gdp_per_capita > 50000
 	GROUP BY
 		location,
-    population
+    		population
 	HAVING 
 		total_people_vaccinated > 70) AS subquery;
 
@@ -598,7 +597,7 @@ WHERE
 
 SELECT
 	location,
-  MAX(people_vaccinated) / population * 100 AS vacc_rate
+	MAX(people_vaccinated) / population * 100 AS vacc_rate
 FROM
 	covid_data
 WHERE 
@@ -620,7 +619,7 @@ FROM
 	(SELECT	
 		location,
 		AVG(CASE WHEN (people_vaccinated / population) * 100 >= 60 THEN new_cases END) as 'after_60',
-    AVG(CASE WHEN (people_vaccinated / population) * 100 < 60 THEN new_cases END) as 'before_60'
+		AVG(CASE WHEN (people_vaccinated / population) * 100 < 60 THEN new_cases END) as 'before_60'
 	FROM
 		covid_data
 	GROUP BY
