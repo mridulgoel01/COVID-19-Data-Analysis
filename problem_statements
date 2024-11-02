@@ -1,0 +1,632 @@
+## Problem_statements
+
+1. What is the total number of COVID-19 cases recorded globally?
+
+SELECT
+	sum(new_cases) AS Total_Cases
+FROM
+	covid_data;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+2. Find the country with the highest total vaccinations administered.
+
+SELECT 
+	location, 
+	sum(people_vaccinated) AS Total_vaccinations_administered
+FROM 
+	covid_data
+GROUP BY 
+	location
+ORDER BY 
+	Total_vaccinations_administered desc;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+3. How many countries have a vaccination rate of over 60% of their population?
+
+SELECT 
+	count(distinct location) AS countries_with_high_vacc_rate
+FROM
+	covid_data
+WHERE
+	(people_vaccinated / population)*100 > 60;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+4. List the top 5 countries with the highest new cases reported on a single day.
+
+SELECT
+	location, 
+  max(new_cases) AS Max_cases
+FROM 
+	covid_data
+GROUP BY
+	location
+ORDER BY
+	max_cases desc
+LIMIT 5;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+5. How many deaths were reported in countries where total vaccinations exceeded 1 million?
+
+SELECT
+	sum(new_deaths) AS total_deaths
+FROM 
+	covid_data
+WHERE
+	total_vaccinations > 10000000;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+6. Find the total number of COVID-19 deaths in Europe.
+
+SELECT 
+	sum(new_deaths) AS Total_deaths
+FROM
+	covid_data
+Where 
+	continent = 'Europe';
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+7. Calculate the average life expectancy of countries with more than 100,000 total cases.
+
+SELECT
+	location,
+  round(avg(life_expectancy),1) AS life_expectancy
+FROM
+	covid_data
+WHERE 
+	total_cases > 100000
+GROUP BY
+	location
+ORDER BY
+	life_expectancy desc;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+8. How many continent have recorded more than 10 million total cases?
+
+SELECT
+	count(distinct continent) AS continent
+FROM 
+	covid_data
+WHERE
+	total_cases > 1000000;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+9. What is the total population of countries where the number of new cases is below 1,000?
+
+SELECT
+	location,
+  population,
+  sum(new_cases)
+FROM 
+	covid_data
+GROUP BY 
+	location, 
+  population
+HAVING
+	sum(new_cases) < 1000;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+10. Find the maximum, minimum, and average number of total deaths across all continent.
+
+SELECT 
+	continent,
+  max(total_deaths) AS Maximum_deaths,
+  min(total_deaths) AS Minimum_deaths,
+  round(avg(total_deaths),2) AS Average_deaths
+FROM
+	covid_data
+GROUP BY
+	continent;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+11. Group the countries by continent and find the total number of vaccinations for each continent.
+
+SELECT
+	continent,
+  sum(new_vaccinations) AS Total_vaccinations
+FROM
+	covid_data
+GROUP BY
+	continent;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+12. Find the average number of new cases for countries with a population over 100 million.
+
+SELECT
+	location,
+  round(avg(new_cases),2) AS Average_cases
+FROM
+	covid_data
+WHERE
+	population > 10000000
+GROUP BY
+	location;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+13. List the countries and their total deaths where the vaccination rate is between 20% and 40%.
+
+SELECT
+	location,
+  sum(new_deaths)
+FROM
+	covid_data
+WHERE
+  (people_vaccinated/population)*100 BETWEEN 20 AND 40
+GROUP BY
+	location;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+14. Find the country with the highest ratio of total deaths to total cases.
+
+SELECT
+	location,
+	sum(new_deaths) AS total_deaths,
+	sum(new_cases) AS new_cases, 
+	(sum(new_deaths)/sum(new_cases)) AS death_to_case_ratio
+FROM
+	covid_data
+GROUP BY
+	location
+ORDER BY 
+	death_to_case_ratio DESC
+LIMIT 1;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+15. Group the continent by life expectancy and find the total number of vaccinations for each life expectancy group.
+
+SELECT
+	CASE 
+		WHEN life_expectancy < 40 THEN 'Less than 40'
+		WHEN life_expectancy <= 50 THEN '40-50'
+    WHEN life_expectancy <= 60 THEN '50-60'
+    WHEN life_expectancy <= 70 THEN '60-70'
+    WHEN life_expectancy <= 80 THEN '70-80'
+    WHEN life_expectancy > 80 THEN 'More than 80'
+    ELSE 'others'
+    END AS life_expectancy_rate,
+  sum(new_vaccinations) AS total_vaccinations
+FROM 
+	covid_data
+GROUP BY
+  life_expectancy_rate;
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+16. What is the total number of new deaths reported in countries with a GDP per capita above $10,000?
+
+SELECT 
+	sum(new_deaths) AS total_deaths_where_GDP_more_than_10000
+FROM
+	covid_data
+WHERE
+	gdp_per_capita > 10000;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+17. Group the continent by population size (small, medium, large) and find the average vaccination rate for each group.
+
+SELECT
+	CASE
+		WHEN population <= 1000000 THEN 'small'
+		WHEN population <= 10000000 THEN 'medium'
+    WHEN population > 10000000 THEN 'large'
+    END AS population_group,
+	round(avg(people_vaccinated / population) * 100, 2) AS vaccination_rate
+FROM
+	covid_data
+GROUP BY 
+	population_group;
+	
+-------------------------------------------------------------------------------------------------------------------------------
+
+18. List the top 10 countries by the reduction in new cases after crossing the 40% vaccination threshold.
+
+SELECT
+	location,
+	avg(CASE 
+			  WHEN (people_vaccinated / population) * 100 <= 0.40 THEN new_cases
+		  	END) AS avg_cases_before,
+	avg(CASE 
+		  	WHEN (people_vaccinated / population) * 100 > 0.40 THEN new_cases
+		  	END) AS avg_cases_after,
+	avg(CASE 
+	  		WHEN (people_vaccinated / population) * 100 <= 0.40 THEN new_cases
+	  		END) - avg(CASE 
+	  		WHEN (people_vaccinated / population) * 100 > 0.40 THEN new_cases
+	  		END) AS reduction_in_cases
+FROM 
+	covid_data
+GROUP BY
+	location
+ORDER BY
+	reduction_in_cases desc
+LIMIT 10;
+
+-----------------------------------------------------------------------------
+
+19. Group the countries by continent and calculate the average number of new deaths per continent.
+
+SELECT
+	continent,
+	avg(new_deaths) 
+FROM
+	covid_data
+GROUP BY
+	continent;
+	
+-------------------------------------------------------------------------------------------------------------------------------
+
+20. Find the total number of new cases reported in the last 30 days.
+
+SELECT
+	sum(new_cases) AS total_new_cases_last_30_day	s
+FROM
+	covid_data
+WHERE date >= (SELECT 
+                  max(date) 
+              FROM 
+                  covid_data) - INTERVAL 30 DAY;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+21. List the countries that have recorded zero new deaths in the past 7 days.
+
+SELECT
+	location
+FROM 
+	covid_data
+WHERE 
+	date >= CURDATE() - INTERVAL 7 DAY
+GROUP BY 
+  location
+HAVING
+  sum(new_deaths) = 0; 
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+22. Which country reported the highest number of new vaccinations in a single day?
+
+SELECT
+	location, 
+	max(new_vaccinations) AS highest_new_vacc_in_single_day
+FROM
+	covid_data
+GROUP BY
+	location
+ORDER BY
+	highest_new_vacc_in_single_day desc
+LIMIT 1;
+	
+-------------------------------------------------------------------------------------------------------------------------------
+
+23. What is the average daily new cases across all countries for the past month?
+
+SELECT 
+  AVG(new_cases) AS average_daily_new_cases_past_month
+FROM
+  covid_data
+WHERE
+  date >= CURDATE() - INTERVAL 30 DAY;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+24. List the countries with more than 10,000 new cases reported in the last 24 hours.
+
+SELECT
+	location,
+	sum(new_cases) AS new_cases_past_24_hours
+FROM
+	covid_data
+WHERE
+	date>= CURDATE() - INTERVAL 1 DAY
+GROUP BY
+	location
+HAVING
+	new_cases_past_24_hours > 10000
+ORDER BY
+	new_cases_past_24_hours DESC;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+25. Find the total number of new cases reported worldwide during the first 6 months of the pandemic.
+
+SELECT
+	sum(new_cases) AS Total_cases_reported_worldwide_first_six_months
+FROM
+	covid_data
+WHERE date <= ((SELECT 
+				          min(date)
+                FROM
+		          		covid_data) + INTERVAL 180 DAY);
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+26. Which country had the highest daily average of new cases in the past week?
+SELECT
+	location,
+	avg(new_cases) 
+FROM
+	covid_data
+WHERE 
+	date >= CURDATE() - INTERVAL 7 DAY
+GROUP BY 
+	location
+ORDER BY
+	avg(new_cases) desc
+LIMIT 1;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+27. List the countries where new cases have been reported consistently for the last 7 days.
+
+SELECT 
+	location
+FROM
+	covid_data
+WHERE 
+	date >= CURDATE() - INTERVAL 7 DAY
+GROUP BY
+	location
+HAVING
+	count(new_cases) = 7;
+	
+-------------------------------------------------------------------------------------------------------------------------------
+
+28. What is the average number of new deaths reported daily in countries with a population over 1 million?
+
+SELECT 
+	avg(daily_new_deaths) AS avg_daily_new_deaths
+FROM 
+  (SELECT
+    location,
+    avg(new_deaths) AS daily_new_deaths
+	FROM
+		covid_data
+	WHERE
+		population > 1000000
+	GROUP BY 
+		location) AS subquery;
+  
+-------------------------------------------------------------------------------------------------------------------------------
+
+29. Find the country with the highest vaccination rate among those with a population under 5 million.
+
+SELECT 
+	location
+FROM 
+  (SELECT
+		location,
+		(people_vaccinated / population) * 100 AS vaccination_rate
+	FROM
+		covid_data
+	WHERE 
+		population <= 5000000)  AS subquery
+ORDER BY
+	vaccination_rate desc
+LIMIT 1;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+30. List the countries where total vaccinations exceed total cases.
+
+SELECT
+	location
+FROM
+	(SELECT
+		location,
+		sum(new_cases) as total_cases_1,
+		sum(new_vaccinations) as total_vaccinations_1
+	FROM
+		covid_data
+  GROUP BY
+		location
+	HAVING
+		total_cases_1 < total_vaccinations_1) AS subquery;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+31. Which countries have more total vaccinations than the total population?
+
+SELECT	
+	location
+FROM
+	(SELECT 
+		location,
+		sum(new_vaccinations) AS total_vaccinations_1,
+		population
+	FROM
+		covid_data
+	GROUP BY
+		location,
+		population) AS subquery
+WHERE 
+	total_vaccinations_1 > population;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+32. What is the percentage of total deaths relative to total cases in each continent?
+
+SELECT
+	continent,
+	(total_deaths_1 /  total_cases_1) * 100 AS perc
+FROM 
+	(SELECT
+		continent,
+		sum(new_deaths) AS total_deaths_1,
+		sum(new_cases) AS total_cases_1
+	FROM
+		covid_data
+	GROUP BY
+		continent) AS subquery;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+33. List the countries where the population is less than 1 million, but the vaccination rate exceeds 80%.
+
+SELECT 
+	location
+FROM 
+  (SELECT
+		location,
+    sum(people_vaccinated) AS people_vaccinated_1,
+    population
+	FROM
+		covid_data
+	WHERE 
+		population < 1000000
+	GROUP BY
+		location,
+    population) AS subquery
+WHERE 
+	((people_vaccinated_1 / population) * 100) > 0.80;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+34. Find the top 3 countries with the lowest death-to-case ratio in Asia.
+
+SELECT 
+	location,
+  (total_deaths_1 / total_cases_1) AS death_to_case_ratio
+FROM
+	(SELECT
+    location,
+    sum(new_deaths) AS total_deaths_1,
+    sum(new_cases) AS total_cases_1
+	FROM 
+		covid_data
+	WHERE 
+		continent = 'asia'
+	GROUP BY
+		location) AS subquery
+WHERE 
+	total_cases_1 > 0
+ORDER BY
+	death_to_case_ratio
+LIMIT 3;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+35. Which countries have more than 50% of their population vaccinated but still report a high number of new cases?
+
+SELECT
+	location
+FROM	
+	(SELECT
+		location,
+		population,	
+		sum(people_vaccinated) AS people_vaccinated_1,
+		sum(new_cases) AS total_cases_1,
+		avg(new_cases) AS avg_cases_1
+	FROM
+		covid_data
+	GROUP BY
+		location,
+		population
+	HAVING 
+	  total_cases_1 > avg_cases_1) AS subquery
+WHERE
+	((people_vaccinated_1 / population) * 100) > 50;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+36. List the countries where life expectancy is above 80 years and total deaths are below 10,000.
+
+SELECT
+	location
+FROM
+	covid_data
+WHERE 
+	life_expectancy > 80 AND total_deaths < 10000
+GROUP BY
+	location;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+37. Find the countries where the GDP per capita is above $50,000 and the vaccination rate is over 70%.
+
+SELECT
+	location
+FROM
+	(SELECT
+		location,
+    (max(people_vaccinated) / population) * 100 AS total_people_vaccinated
+	FROM
+		covid_data
+	WHERE
+		gdp_per_capita > 50000
+	GROUP BY
+		location,
+    population
+	HAVING 
+		total_people_vaccinated > 70) AS subquery;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+38. Which countries have a higher number of new cases after 50% of their population got vaccinated?
+
+SELECT
+	location
+FROM
+	(SELECT
+		location,
+		SUM(CASE WHEN (people_vaccinated / population) * 100 >= 50 THEN new_cases END) AS cases_after_50,
+		SUM(CASE WHEN (people_vaccinated / population) * 100 < 50 THEN new_cases END) AS cases_before_50
+	FROM
+		covid_data
+	GROUP BY
+		location) AS subquery
+WHERE
+	cases_after_50 > cases_before_50;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+39. Find the country with the highest vaccination rate that still reports more than 1,000 new cases per day.
+
+SELECT
+	location,
+  MAX(people_vaccinated) / population * 100 AS vacc_rate
+FROM
+	covid_data
+WHERE 
+	new_cases > 1000
+GROUP BY 
+	location,
+	population
+ORDER BY
+	vacc_rate DESC
+LIMIT 1;
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+40. Which countries have reduced their daily new cases by more than 50% after reaching a 60% vaccination rate?
+
+SELECT
+	location
+FROM	
+	(SELECT	
+		location,
+		AVG(CASE WHEN (people_vaccinated / population) * 100 >= 60 THEN new_cases END) as 'after_60',
+    AVG(CASE WHEN (people_vaccinated / population) * 100 < 60 THEN new_cases END) as 'before_60'
+	FROM
+		covid_data
+	GROUP BY
+		location) AS subquery
+WHERE 
+	after_60 < (before_60 / 2);
+
+-------------------------------------------------------------------------------------------------------------------------------
+
