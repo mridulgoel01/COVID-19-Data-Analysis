@@ -13,11 +13,11 @@ This project aims to analyze COVID-19 data to derive insights on the impact of v
 - **SQL**: For data querying and analysis.
 - **Excel**: For initial data manipulation and preparation.
 
-## SQL Queries
-The following SQL queries are included in this project:
-1. Query to find countries with a high number of new cases post-vaccination.
-2. Correlation analysis between total vaccinations and total deaths.
-3. Identification of countries with significant changes in case numbers after reaching vaccination milestones.
+## Problem Statements
+List of Some Problem Statements that are included in this project:
+1. Which countries have reduced their daily new cases by more than 50% after reaching a 60% vaccination rate?
+2. Find the countries where the GDP per capita is above $50,000 and the vaccination rate is over 70%
+3. Find the total number of new cases reported worldwide during the first 6 months of the pandemic.
 
 ## Feedback
 
